@@ -25,14 +25,15 @@ import { formatCount } from "@/lib/format";
 import { toast } from "sonner";
 
 interface ProfileUser {
-  id: string;
+  id: number;
   username: string;
   display_name: string;
   bio: string;
   avatar_url: string;
   avatars: string[];
   is_private: boolean;
-  verified: string;
+  is_verified: boolean;
+  is_artist_verified: boolean;
   links: {
     telegram?: string;
     instagram?: string;
@@ -78,18 +79,20 @@ export default function Profile() {
   useEffect(() => {
     if (!username) return;
     setLoading(true);
-    apiGet(`/users/${username}/profile`)
+    apiGet(`/profile?username=${encodeURIComponent(username)}`)
       .then((data) => {
-        setProfile(data);
-        setEditName(data.display_name || "");
-        setEditBio(data.bio || "");
-        setEditPrivate(data.is_private || false);
+        const p = data.profile;
+        setProfile(p);
+        setPosts(data.posts || []);
+        setEditName(p.display_name || "");
+        setEditBio(p.bio || "");
+        setEditPrivate(p.is_private || false);
         setEditLinks({
-          telegram: data.links?.telegram || "",
-          instagram: data.links?.instagram || "",
-          tiktok: data.links?.tiktok || "",
-          youtube: data.links?.youtube || "",
-          website: data.links?.website || "",
+          telegram: p.links?.telegram || "",
+          instagram: p.links?.instagram || "",
+          tiktok: p.links?.tiktok || "",
+          youtube: p.links?.youtube || "",
+          website: p.links?.website || "",
         });
       })
       .catch(() => {
