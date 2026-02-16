@@ -81,13 +81,4 @@ async function apiUpload<T = any>(path: string, formData: FormData): Promise<T> 
   return res.json();
 }
 
-export {
-  API_URL,
-  getToken,
-  getUserId,
-  setAuth,
-  clearAuth,
-  apiGet,
-  apiPost,
-  apiUpload,
-};
+export { API_URL, getToken, getUserId, setAuth, clearAuth, apiGet, apiPost, apiUpload };
