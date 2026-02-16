@@ -69,7 +69,7 @@ export default function Chat() {
     fetchMessages();
 
     // Mark as read
-    apiPost(`/messages/${userId}/read`).catch(() => {});
+    apiPost("/messages/read", { user_id: userId }).catch(() => {});
 
     // Poll for new messages
     intervalRef.current = setInterval(fetchMessages, 5000);
@@ -87,11 +87,12 @@ export default function Chat() {
     setSending(true);
     try {
       if (editingId) {
-        await apiPost(`/messages/${editingId}/edit`, { text: text.trim() });
+        await apiPost("/messages/edit", { message_id: editingId, content: text.trim() });
         setEditingId(null);
       } else {
-        await apiPost(`/messages/${userId}/send`, {
-          text: text.trim(),
+        await apiPost("/messages/send", {
+          receiver_id: userId,
+          content: text.trim(),
           reply_to_id: replyTo?.id,
         });
       }
@@ -107,7 +108,7 @@ export default function Chat() {
 
   const handleDelete = async (msgId: string) => {
     try {
-      await apiPost(`/messages/${msgId}/delete`);
+      await apiPost("/messages/hide", { message_id: msgId });
       setMessages((prev) => prev.filter((m) => m.id !== msgId));
     } catch {
       toast.error("Ошибка удаления");
